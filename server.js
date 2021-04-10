@@ -1,12 +1,18 @@
 const express = require('express')
+// creates and imports the express npm module so we have access to http methods
 const app = express()
+//assigns express to a variable called "app"
 const MongoClient = require('mongodb').MongoClient
+// connects our server to the mongoDB database
 const PORT = 2121
+//assigns the port number to the variable PORT
 require('dotenv').config()
+//gives us access to the hidden variables in the .env file
 
 let db,
     dbConnectionStr = process.env.DB_STRING,
     dbName = 'todo'
+//declares variables to hold the database, connection string and database name.
 
 MongoClient.connect(dbConnectionStr, {useUnifiedTopology: true})
     .then(client => {
