@@ -23,22 +23,33 @@ MongoClient.connect(dbConnectionStr, {useUnifiedTopology: true})
         console.log(err)
     })
 
-app.set('view engine', 'ejs')
-app.use(express.static('public'))
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json())
+app.set('view engine', 'ejs') 
+app.use(express.static('public')) //Any files in the public folder, the server will serve up
+app.use(express.urlencoded({ extended: true })) //We can look at our application, look at the request being sent
+//- pull that form out of the request
+app.use(express.json()) //We can look at our application, look at the request being sent
+//- pull that form out of the request
 
 app.get('/', async (req,res)=>{
+    //request information from the server
     const todoItems = await db.collection('todos').find().toArray()
     const itemsLeft = await db.collection('todos').countDocuments({completed: false})
+    //
     res.render('index.ejs', {zebra: todoItems, left: itemsLeft})
+    //renders our get request into an ejs file, which can be found on local host 2121.
 })
 
 app.post('/createTodo', (req, res)=>{
+//listens for a post request from client and sends it to /createTodo
     db.collection('todos').insertOne({todo: req.body.todoItem, completed: false})
-    .then(result =>{
-        console.log('Todo has been added!')
-        res.redirect('/')
+    //sends the information from the form, into the database collection called "todos."
+    //creates a document in Mongodb, that has a "todo" property, and the value is coming
+    //from the input of the form.
+    //everytime we submit a form, its going to create another document of completed and 
+    //set it as false
+    .then(result =>{ //take the result of what occured
+        console.log('Todo has been added!') 
+        res.redirect('/') //responds with a page refresh (redirects to main page)
     })
 })
 
